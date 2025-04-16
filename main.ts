@@ -110,7 +110,7 @@ namespace ShaderObj {
     }
 
     //% blockId=shader_obj_setpalletecolor
-    //% block="set $shadeId=shader_obj_kind_get in $palidx=colorindexpicker to $colidx=colorindexpicker"
+    //% block="set $shadeID=shader_obj_kind_get in $palidx=colorindexpicker to $colidx=colorindexpicker"
     //% weight=100
     export function setShadePattern(shadeID: number, palidx: number, colidx: number) {
         shadeID = checkNewShade(shadeID)
@@ -120,7 +120,7 @@ namespace ShaderObj {
     }
 
     //% blockId=shader_obj_setpalletecolorlist
-    //% block="set $shadeId=shader_obj_kind_get in $palidx to $colidx"
+    //% block="set $shadeID=shader_obj_kind_get in $palidx to $colidx"
     //% palidx.shadow=lists_create_with palidx.defl=colorindexpicker
     //% colidx.shadow=lists_create_with colidx.defl=colorindexpicker
     //% weight=99
@@ -145,7 +145,7 @@ namespace ShaderObj {
     //% width.defl=16
     //% height.defl=16
     //% blockSetVariable=myShader
-    //% weight=90
+    //% weight=89
     export function createRectangularShaderSprite(width: number, height: number, shadeLevel: number): Sprite {
         const scene = game.currentScene();
 
@@ -172,7 +172,7 @@ namespace ShaderObj {
     //% image.shadow=screen_image_picker
     //% shadeLevel.shadow=shader_obj_kind_get
     //% blockSetVariable=myShader
-    //% weight=100
+    //% weight=90
     export function createImageShaderSprite(image: Image, shadeLevel: number): Sprite {
         const scene = game.currentScene();
 
