@@ -38,34 +38,26 @@ namespace SpriteKind {
     export const Shader = SpriteKind.create();
 }
 
-//% color="#9e6eb8" icon="\uf0eb"
+//% block="Shader Object" color="#9e6eb8" icon="\uf0eb"
 namespace ShaderObj {
 
     let shadeData: number[][] = [
         // dark 100%
-        [15,15,15,15,15,15,15,15,
-        15,15,15,15,15,15,15,15],
+        [15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15],
         // dark 75%
-        [15,12,15,15,15,12,15,12,
-        15,12,15,15,15,15,15,15],
+        [15,12,15,15,15,12,15,12,15,12,15,15,15,15,15,15],
         // dark 50%
-        [15,11,12,12,12,14,12,8,
-        15,8,12,15,15,12,15,15],
+        [15,11,12,12,12,14,12,8,15,8,12,15,15,12,15,15],
         // dark 25%
-        [15,13,10,11,14,4,8,6,
-        12,6,11,12,15,11,12,15],
+        [15,13,10,11,14,4,8,6,12,6,11,12,15,11,12,15],
         // light 100%
-        [1,1,1,1,1,1,1,1,
-        1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         // light 75%
-        [13,1,5,1,1,1,1,1,
-        1,1,1,1,13,1,1,13],
+        [13,1,5,1,1,1,1,1,1,1,1,1,13,1,1,13],
         // light 50%
-        [11,1,3,1,5,1,9,1,
-        9,1,5,13,3,1,5,11],
+        [11,1,3,1,5,1,9,1,9,1,5,13,3,1,5,11],
         // light 25%
-        [12,1,4,5,3,1,7,9,
-        6,1,3,3,11,1,4,12]
+        [12,1,4,5,3,1,7,9,6,1,3,3,11,1,4,12]
     ]
 
     function newNumArr(len: number) {
@@ -82,27 +74,6 @@ namespace ShaderObj {
 
     let screenRowsBuffer: Image;
     let maskRowsBuffer: Image;
-
-    export enum ShadeLevel {
-        //% block="dark 20%"
-        Dark20 = 0,
-        //% block="dark 40%"
-        Dark40 = 1,
-        //% block="dark 60%"
-        Dark60 = 2,
-        //% block="dark 80%"
-        Dark80 = 3,
-        //% block="dark 100%"
-        Dark100 = 4,
-        //% block="light 25%"
-        Light25 = -1,
-        //% block="light 50%"
-        Light50 = -2,
-        //% block="light 75%"
-        Light75 = -3,
-        //% block="light 100%"
-        Light100 = -4,
-    }
 
     function shadeImage(target: Image, left: number, top: number, mask: Image, palette: number[]) {
         if (!screenRowsBuffer || screenRowsBuffer.height < target.height) {
@@ -184,7 +155,7 @@ namespace ShaderObj {
         const i = image.create(width, height);
         i.fill(3);
 
-        const sprite = new ShaderSprite(i, palette)
+        const sprite = new ShaderSpriteBasic(i, palette)
         sprite.setKind(SpriteKind.Shader);
         scene.physicsEngine.addSprite(sprite);
 
@@ -209,7 +180,7 @@ namespace ShaderObj {
 
         palette = shadeitem(shadeLevel);
 
-        const sprite = new ShaderSprite(image, palette)
+        const sprite = new ShaderSpriteBasic(image, palette)
         sprite.setKind(SpriteKind.Shader);
         scene.physicsEngine.addSprite(sprite);
         sprite.shadeRectangle = false;
@@ -230,8 +201,8 @@ namespace ShaderObj {
         let palette: number[];
         palette = shadeitem(shadeLevel)
         spr.data["__palette__"] = palette as number[]
-        if (spr instanceof ShaderSprite) {
-            (spr as ShaderSprite).onPaletteChanged(); // Update palette when set
+        if (spr instanceof ShaderSpriteBasic) {
+            (spr as ShaderSpriteBasic).onPaletteChanged(); // Update palette when set
         } else {
             throw (`this sprite is not an shader sprite ${spr}`);
         }
@@ -249,11 +220,11 @@ namespace ShaderObj {
     //% kindNamespace=ShadeKind
     //% kindPromptHint="enter your shade here"
     //% weight=50
-    export function _shadeLevel(level: ShadeLevel): number {
+    export function _shadeLevel(level: number): number {
         return level;
     }
 
-    class ShaderSprite extends Sprite {
+    class ShaderSpriteBasic extends Sprite {
         protected shadePalette: number[];
         shadeRectangle: boolean;
 
