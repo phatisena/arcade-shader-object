@@ -1,7 +1,7 @@
 {
     "name": "arcade-shader-object",
-    "version": "0.0.2",
-    "description": "",
+    "version": "0.0.3",
+    "description": "shader render in makecode arcade with shader setting",
     "dependencies": {
         "device": "*"
     },
