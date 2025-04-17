@@ -156,18 +156,18 @@ namespace ShaderObj {
      * @param shade level as enum or number 
      */
     //% blockId=shader_obj_createRectangularShaderSprite
-    //% block="create rectangular shader with width $width height $height shade $shadeLevel"
-    //% shadeLevel.shadow=shader_obj_kind_get
+    //% block="create rectangular shader with width $width height $height shade $shadeID"
+    //% shadeID.shadow=shader_obj_kind_get
     //% width.defl=16
     //% height.defl=16
     //% blockSetVariable=myShader
     //% weight=89
-    export function createRectangularShaderSprite(width: number, height: number, shadeLevel: number): Sprite {
+    export function createRectangularShaderSprite(width: number, height: number, shadeID: number): Sprite {
         const scene = game.currentScene();
 
         let palette: number[];
 
-        palette = shadeitem(shadeLevel);
+        palette = shadeitem(shadeID);
         const i = image.create(width, height);
         i.fill(3);
 
@@ -184,17 +184,17 @@ namespace ShaderObj {
      * @param shade pattern as kind number
      */
     //% blockId=shader_obj_createImageShaderSprite
-    //% block="create image shader with $image shade $shadeLevel"
+    //% block="create image shader with $image shade $shadeID"
     //% image.shadow=screen_image_picker
-    //% shadeLevel.shadow=shader_obj_kind_get
+    //% shadeID.shadow=shader_obj_kind_get
     //% blockSetVariable=myShader
     //% weight=90
-    export function createImageShaderSprite(image: Image, shadeLevel: number): Sprite {
+    export function createImageShaderSprite(image: Image, shadeID: number): Sprite {
         const scene = game.currentScene();
 
         let palette: number[];
 
-        palette = shadeitem(shadeLevel);
+        palette = shadeitem(shadeID);
 
         const sprite = new ShaderSpriteBasic(image, palette)
         sprite.setKind(SpriteKind.Shader);
@@ -209,13 +209,13 @@ namespace ShaderObj {
      * @param current shader sprite not original sprite 
      * @param new shade pattern as kind number
      */
-    //% blockId=shader_obj_setShadeLevel
-    //% block=" $spr set shade level to $shadeLevel=shader_obj_kind_get"
+    //% blockId=shader_obj_setshadeID
+    //% block=" $spr set shade level to $shadeID=shader_obj_kind_get"
     //% spr.shadow=variables_get spr.defl=myShader
     //% weight=70
-    export function setShade(spr: Sprite, shadeLevel: number) {
+    export function setShade(spr: Sprite, shadeID: number) {
         let palette: number[];
-        palette = shadeitem(shadeLevel)
+        palette = shadeitem(shadeID)
         spr.data["__palette__"] = palette as number[]
         if (spr instanceof ShaderSpriteBasic) {
             (spr as ShaderSpriteBasic).onPaletteChanged(); // Update palette when set
@@ -225,19 +225,18 @@ namespace ShaderObj {
     }
 
     /**
-     * kind number block shadow for shade level 
-     * but not used it.
+     * kind number block shadow for shade number
+     * @param kind as number 
      */
-    //% blockHidden
     //% shim=KIND_GET
     //% kindMemberName=Shade
     //% blockId=shader_obj_kind_get
-    //% block="$level"
+    //% block="$kindID"
     //% kindNamespace=ShadeKind
     //% kindPromptHint="enter your shade here"
     //% weight=50
-    export function _shadeLevel(level: number): number {
-        return level;
+    export function _shadeID(kindID: number): number {
+        return kindID;
     }
 
     class ShaderSpriteBasic extends Sprite {
