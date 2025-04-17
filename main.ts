@@ -77,16 +77,19 @@ namespace ShaderObj {
         return shadeData.length-1
     }
 
-    let screenRowsImage: Image;
-    let maskRowsImage: Image;
+    let screenRowsBuffer: Buffer;
+    let maskRowsBuffer: Buffer;
 
-    function shadeImage(target: Image, left: number, top: number, mask: Image, palette: number[]) {
-        if (!screenRowsImage || screenRowsImage.height != target.height) {
-            screenRowsImage = image.create(1,target.height);
+    function shadeImage(target: Image, left: number, top: number, mask: Image, palidx: number[]) {
+        if (!screenRowsBuffer || screenRowsBuffer.length != target.height) {
+            screenRowsBuffer = pins.createBuffer(target.height);
         }
-        if (!maskRowsImage || maskRowsImage.height != target.height) {
-            maskRowsImage = image.create(1,mask.height);
+        if (!maskRowsBuffer || maskRowsBuffer.length != target.height) {
+            maskRowsBuffer = pins.createBuffer(mask.height);
         }
+
+        let palette: Buffer;
+        palette = pins.createBufferFromArray(palidx);
 
         let targetX = left | 0;
         let targetY = top | 0;
@@ -97,16 +100,16 @@ namespace ShaderObj {
             if (targetX >= target.width) break;
             else if (targetX < 0) continue;
 
-            maskRowsImage.drawImage(mask.clone(),0-x,0)
-            screenRowsImage.drawImage(target.clone(),0-targetX,0)
+            mask.getRows(x, maskRowsBuffer)
+            target.getRows(targetX, screenRowsBuffer)
 
             for (y = 0, targetY = top | 0; y < mask.height; y++, targetY++) {
                 if (targetY >= target.height) break;
                 else if (targetY < 0) continue;
 
-                if (maskRowsImage.getPixel(0,y)) screenRowsImage.setPixel(0,targetY,palette[screenRowsImage.getPixel(0,targetY)]);
+                if (maskRowsBuffer[y]) screenRowsBuffer[targetY] = palette[screenRowsBuffer[targetY]];
             }
-            target.drawImage(screenRowsImage,targetX,0)
+            target.setRows(targetX, screenRowsBuffer)
         }
     }
 
@@ -266,9 +269,11 @@ namespace ShaderObj {
             const t = this.top - oy;
 
             if (this.shadeRectangle) {
-                this.image.fill(3)
+                const palbuf = pins.createBufferFromArray(this.shadePalette)
+                screen.mapRect(l, t, this.image.width, this.image.height, palbuf);
+            } else {
+                shadeImage(screen, l, t, this.image, this.shadePalette);
             }
-            shadeImage(screen, l, t, this.image, this.shadePalette);
 
             if (this.flags & SpriteFlag.ShowPhysics) {
                 const font = image.font5;
