@@ -80,16 +80,13 @@ namespace ShaderObj {
     let screenRowsBuffer: Buffer;
     let maskRowsBuffer: Buffer;
 
-    function shadeImage(target: Image, left: number, top: number, mask: Image, palidx: number[]) {
+    function shadeImage(target: Image, left: number, top: number, mask: Image, palette: Buffer) {
         if (!screenRowsBuffer || screenRowsBuffer.length != target.height) {
             screenRowsBuffer = pins.createBuffer(target.height);
         }
         if (!maskRowsBuffer || maskRowsBuffer.length != target.height) {
             maskRowsBuffer = pins.createBuffer(mask.height);
         }
-
-        let palette: Buffer;
-        palette = pins.createBufferFromArray(palidx);
 
         let targetX = left | 0;
         let targetY = top | 0;
@@ -243,20 +240,25 @@ namespace ShaderObj {
     }
 
     class ShaderSpriteBasic extends Sprite {
-        protected shadePalette: number[];
+        protected shadePalette: Buffer;
+        protected shadePalNum: number[];
         shadeRectangle: boolean;
 
         constructor(image: Image, shadePalette: number[]) {
             super(image);
             this.data["__palette__"] = shadePalette as number[]
-            this.shadePalette = shadePalette;
+            this.shadePalNum = shadePalette;
+            this.shadePalette = pins.createBufferFromArray(this.shadePalNum)
             this.shadeRectangle = true;
             this.onPaletteChanged();
         }
 
 
         onPaletteChanged() {
-            if (this.shadePalette !== this.data["__palette__"]) this.shadePalette = this.data["__palette__"] as number[];
+            if (this.shadePalNum !== this.data["__palette__"]) {
+                this.shadePalNum = this.data["__palette__"] as number[];
+                this.shadePalette = pins.createBufferFromArray(this.shadePalNum);
+            }
         }
 
         __drawCore(camera: scene.Camera) {
@@ -269,8 +271,7 @@ namespace ShaderObj {
             const t = this.top - oy;
 
             if (this.shadeRectangle) {
-                const palbuf = pins.createBufferFromArray(this.shadePalette)
-                screen.mapRect(l, t, this.image.width, this.image.height, palbuf);
+                screen.mapRect(l, t, this.image.width, this.image.height, this.shadePalette);
             } else {
                 shadeImage(screen, l, t, this.image, this.shadePalette);
             }
